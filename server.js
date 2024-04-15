@@ -80,6 +80,38 @@ async function transferChapterAndTests() {
     }
 }
 
+async function syncCollectionFromSource(collection) {
+    try {
+        await localClient.connect();
+        await mainClient.connect();
+
+        const db1 = localClient.db('test'); 
+        const db2 = mainClient.db('test'); 
+
+        const sourceCollection = db1.collection(collection); // local 
+        const targetCollection = db2.collection(collection); // main
+
+        const cursor = sourceCollection.find({});
+        
+        while (await cursor.hasNext()) {
+            const doc = await cursor.next();
+            await targetCollection.updateOne(
+                { _id: doc._id }, // Match document by its _id
+                { $set: doc },   // Update with new document data
+                { upsert: true } // Insert if it doesn't exist
+            );
+        }
+
+        console.log('Data synchronized successfully for collection:', collection);
+
+    } catch (error) {
+        console.error('Error synchronizing data:', error);
+    } finally {
+        await localClient.close();
+        await mainClient.close();
+    }
+}
+
 app.post("/syncData", async (req,res) => {
     await copyCollectionFromSource('chapters');
     await copyCollectionFromSource('subjects');
@@ -87,6 +119,15 @@ app.post("/syncData", async (req,res) => {
     await copyCollectionFromSource('syllabuses');
     await copyCollectionFromSource('tests');
     await copyCollectionFromSource('media');
+
+    await syncCollectionFromSource('schools');
+    await syncCollectionFromSource('instructors');
+    await syncCollectionFromSource('users');
+    await syncCollectionFromSource('students');
+    await syncCollectionFromSource('studenttests');
+    await syncCollectionFromSource('subject-times');
+    await syncCollectionFromSource('chapter-times');
+    
 
     res.send('Transfer initiated')
 })
