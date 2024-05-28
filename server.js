@@ -286,7 +286,7 @@ const downloadPdfsFromSource = async () => {
     console.error(error);
   } finally {
     await localClient.close();
-  }
+  } 
 };
 
 app.get("/download-pdf", async (req, res) => {
