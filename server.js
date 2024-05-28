@@ -320,6 +320,8 @@ app.get("/download-pdf", async (req, res) => {
   }
 });
 
+app.use('/files', express.static(path.join(__dirname, 'books')));
+
 app.listen(port, (req, res) => {
   console.log(`Server is listening on port ${port}`);
 });
