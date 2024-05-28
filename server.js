@@ -278,7 +278,7 @@ const downloadPdfsFromSource = async () => {
                     // Update the document with the file path
                     await chapterCollection.updateOne(
                         { _id: doc._id },
-                        { $set: { filePath:"/books/"+filename } }
+                        { $set: { filePath:'\books\\'+filename } }
                     );
     
                 } catch (downloadError) {
