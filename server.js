@@ -172,8 +172,8 @@ app.post("/syncData", async (req, res) => {
   await copyCollectionFromSource("media");
 
   await syncCollectionFromSource("schools");
-  await syncCollectionFromSource("instructors");
   await syncCollectionFromSource("users");
+  await syncCollectionFromSource("instructors");
   await syncCollectionFromSource("students");
   await syncCollectionFromSource("studenttests");
   await syncCollectionFromSource("subject-times");
