@@ -145,11 +145,15 @@ async function syncCollectionFromSource(collection) {
 
     while (await cursor.hasNext()) {
       const doc = await cursor.next();
-      await targetCollection.updateOne(
-        { _id: doc._id }, // Match document by its _id
-        { $set: doc }, // Update with new document data
-        { upsert: true } // Insert if it doesn't exist
-      );
+      try {
+        await targetCollection.updateOne(
+          { _id: doc._id }, // Match document by its _id
+          { $set: doc }, // Update with new document data
+          { upsert: true } // Insert if it doesn't exist
+        );
+      } catch (error) {
+        console.log('Failed to sync for user:'+doc._id)
+      }
     }
 
     console.log("Data synchronized successfully for collection:", collection);
